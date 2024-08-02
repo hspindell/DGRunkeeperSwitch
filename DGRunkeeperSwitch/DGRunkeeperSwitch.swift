@@ -188,13 +188,13 @@ open class DGRunkeeperSwitch: UIControl {
         return DGRunkeeperSwitchRoundedLayer.self
     }
     
-    func tapped(_ gesture: UITapGestureRecognizer!) {
+    @objc func tapped(_ gesture: UITapGestureRecognizer!) {
         let location = gesture.location(in: self)
         let index = Int(location.x / (bounds.width / CGFloat(titleLabels.count)))
         setSelectedIndex(index, animated: true)
     }
     
-    func pan(_ gesture: UIPanGestureRecognizer!) {
+    @objc func pan(_ gesture: UIPanGestureRecognizer!) {
         if gesture.state == .began {
             initialSelectedBackgroundViewFrame = selectedBackgroundView.frame
         } else if gesture.state == .changed {
@@ -222,7 +222,7 @@ open class DGRunkeeperSwitch: UIControl {
             if (!catchHalfSwitch) {
                 self.sendActions(for: .valueChanged)
             }
-            UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: animationSpringDamping, initialSpringVelocity: animationInitialSpringVelocity, options: [UIViewAnimationOptions.beginFromCurrentState, UIViewAnimationOptions.curveEaseOut], animations: { () -> Void in
+            UIView.animate(withDuration: animationDuration, delay: 0.0, usingSpringWithDamping: animationSpringDamping, initialSpringVelocity: animationInitialSpringVelocity, options: [UIView.AnimationOptions.beginFromCurrentState, UIView.AnimationOptions.curveEaseOut], animations: { () -> Void in
                 self.layoutSubviews()
                 }, completion: nil)
         } else {
@@ -245,13 +245,13 @@ open class DGRunkeeperSwitch: UIControl {
         let titleLabelMaxHeight = bounds.height - selectedBackgroundInset * 2.0
         
         zip(titleLabels, selectedTitleLabels).forEach { label, selectedLabel in
-            let index = titleLabels.index(of: label)!
+            guard let index = titleLabels.index(of: label) else { return }
             
             var size = label.sizeThatFits(CGSize(width: titleLabelMaxWidth, height: titleLabelMaxHeight))
             size.width = min(size.width, titleLabelMaxWidth)
           
-            let x = floor((bounds.width / CGFloat(titleLabels.count)) * CGFloat(index) + (bounds.width / CGFloat(titleLabels.count) - size.width) / 2.0)
-            let y = floor((bounds.height - size.height) / 2.0)
+            let x: CGFloat = floor((bounds.width / CGFloat(titleLabels.count)) * CGFloat(index) + (bounds.width / CGFloat(titleLabels.count) - size.width) / 2.0)
+            let y: CGFloat = floor((bounds.height - size.height) / 2.0)
             let origin = CGPoint(x: x, y: y)
             
             let frame = CGRect(origin: origin, size: size)
